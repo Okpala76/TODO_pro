@@ -10,6 +10,8 @@ class Todo():
     def Read(self):
         pass
     def update(self):
+        if command == 'update':
+            
         pass
     def delete(self):
         pass
