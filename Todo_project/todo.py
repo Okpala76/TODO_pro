@@ -17,10 +17,39 @@ class Todo():
     def Read(self):
         pass
     def update(self):
-        pass
+        # initializing a variable to hold the task_id of the task to be marked done
+        Boo = True
+        while Boo:
+            task_id = input("What task number are you trying to change: ")
+            if task_id.isdigit() and task_id in range(1,len(self.alltask)+1):
+                Boo = False
+            else:
+                print("This input is not an integer")
+                continue
+        print(f"The status of this task is currently:{self.alltask[task_id]['task_status']}")
+
+        # this while loop will ensure the user wants to perform change as well as perform checks on user input
+
+        while True:
+            x = input("Do you want to go ahead and change status: Y or N")
+            if x.capitalize() == "Y":
+                self.alltask[task_id]["task_status"] = "Done"
+                print(f"The status of the task {self.alltask[task_id]['task_name']} has been updated to {self.alltask[task_id]['task_status']} ")
+                break
+            elif x.capitalize() == "N":
+                break
+            else:
+                print("The value inputted is not a 'Y' or 'N': Try again....")
+                continue  
+        
     def delete(self):
         pass
     def time(self):
         pass
     def mail_reminder(self):
         pass
+
+
+gochi = Todo()
+
+gochi.create()
