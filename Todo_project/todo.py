@@ -52,7 +52,11 @@ class Todo():
         
     def read(self):
         for todo_items in self.alltask:
-            print(todo_items) 
+            print(f'''
+{todo_items['task_id']}.] TASK: {todo_items['task_name']}    STATUS:{todo_items['task_status']}     PERIOD DUE:{todo_items['task_time']}
+            
+            
+''') 
 
     def update(self):
         # initializing a variable to hold the task_id of the task to be marked done

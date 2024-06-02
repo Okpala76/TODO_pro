@@ -19,7 +19,8 @@ def run ():
         
         elif command == 'read':
             todo_app.read()
-
+        elif command == 'delete':
+            todo_app.delete()
         elif command == 'help':
             print(todo_app.manual)
         elif command == 'exit':
