@@ -131,6 +131,7 @@ class Todo():
 
             server.quit()
 
+
         email_alert(task_subject, task_message,self.mail)
 
 
