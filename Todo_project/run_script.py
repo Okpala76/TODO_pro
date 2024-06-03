@@ -1,8 +1,6 @@
 from todo import Todo
 
 
-
-
 #Regulates smooth runing of the app from the cli interface.
 def run ():
     todo_app = Todo()

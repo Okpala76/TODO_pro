@@ -53,10 +53,7 @@ class Todo():
     def read(self):
         for todo_items in self.alltask:
             print(f'''
-{todo_items['task_id']}.] TASK: {todo_items['task_name']}    STATUS:{todo_items['task_status']}     PERIOD DUE:{todo_items['task_time']}
-            
-            
-''') 
+{todo_items['task_id']}.] TASK: {todo_items['task_name']}    STATUS:{todo_items['task_status']}     PERIOD DUE:{todo_items['task_time']}''') 
 
     def update(self):
         # initializing a variable to hold the task_id of the task to be marked done
@@ -100,14 +97,25 @@ class Todo():
     def delete(self):
         #gets id of  task to be deleted:
         cascade_task = int (input('input id of item to be deleted: '))
-
+        index = 0
         for tasks in self.alltask:
             #index of alltask list
-            index = 0
+            
             if cascade_task == tasks['task_id']:
+                print(f"task id:{tasks['task_id']}selected")
                 del self.alltask[index]
+                print(f"task id:{tasks['task_id']} deleted")
+                break
+                
             else:
                 index += 1
+
+        #update task id after delete.
+        update_id = 1
+        for tasks in self.alltask:
+            tasks['task_id'] = update_id
+            update_id +=1
+        print('todo_list id updated')
         
     def time(self):
         pass
@@ -146,12 +154,3 @@ class Todo():
             server.quit()
 
         email_alert(task_subject, task_message,self.mail)
-
-
-
-
-
-
-
-
-
