@@ -1,5 +1,7 @@
 import smtplib
 from email.message import EmailMessage
+from datetime import datetime
+
 
 class Todo():
     def __init__(self):
@@ -31,6 +33,7 @@ class Todo():
             view   ----- To view todo items
             help   ----- To view manual
             '''
+
         ### th
         self.mail = self.mail_collector()
 
@@ -118,8 +121,41 @@ class Todo():
         print('todo_list id updated')
         
     def time(self):
-        pass
-    
+        alarm_prefrence = input('Do you wish to be reminded: yes or no?  ').lower()
+        if alarm_prefrence != 'no':
+            year = input('''
+                            press enter to select your current year
+
+                            what year: ''') or str(datetime.now())[:4]
+            month = input('''
+                            press enter to select your current month
+
+                            month(mm): ''') or str(datetime.now())[5:7]
+            day = input('''
+                        press enter to select your current day
+
+                        day(dd): ''') or str(datetime.now())[8:10]
+            specific_time = input('''Time (hh:mm):  ''')  
+            curr_time = str(datetime.now())[:16]
+            alarm = f'{year}-{month}-{day} {specific_time}'
+            date_format = '%Y-%m-%d %H:%M'
+            print(f'{alarm} {curr_time}')
+
+            while True:
+                curr_time = str(datetime.now())[:16]
+                dt_obj = datetime.strptime(alarm, date_format)
+                dt_ob2 = datetime.strptime(curr_time, date_format)
+                seconds_since_epoch = int(dt_obj.timestamp())
+                current_time_sinceepoch = int(dt_ob2.timestamp())
+                print(f'{seconds_since_epoch} {current_time_sinceepoch}')
+                time_before_alarm = seconds_since_epoch - current_time_sinceepoch
+                print(time_before_alarm)
+                time.sleep(time_before_alarm)
+                if curr_time == alarm:
+                        print('time to do this')
+                        break
+                pass
+            
     ## mail collector: This collect the users mail 
     def mail_collector(self):
         while True:
@@ -153,4 +189,4 @@ class Todo():
 
             server.quit()
 
-        email_alert(task_subject, task_message,self.mail)
+        email_alert(task_subject, task_message,self.mail)33333
