@@ -8,7 +8,7 @@ def todo_generator():
     print(todo_app.manual)
 
     while True:
-        command = input('write your command here: ')
+        command = input('write your command here: ').lower()
         if command == 'create':
             todo_app.create()
     

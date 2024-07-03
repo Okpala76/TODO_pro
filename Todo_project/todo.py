@@ -45,6 +45,7 @@ class Todo():
         task_time = input("At what time do you what to carry out said task: ") 
         # CREATING THE TASK
         task_row = {"task_id":len(self.alltask)+1, "task_name": task_name, "task_status": "Not Done", "task_time": task_time } #! i edited task id and added +1, so that the id of every new task will be higer than d last
+        task_row = {"task_id":len(self.alltask)+1, "task_name": task_name, "task_status": "Not Done", "task_time": task_time } #! i edited task id and added +1, so that the id of every new task will be higer than d last
         self.alltask.append(task_row)
 
         # Wrote the code message for the mail alert
@@ -55,7 +56,7 @@ class Todo():
         self.mail_reminder(create_subject, create_body)
         set_alarm(self)
         
-    def read(self):
+    def read(self):  
         for todo_items in self.alltask:
             print(f'''
 {todo_items['task_id']}.] TASK: {todo_items['task_name']}    STATUS:{todo_items['task_status']}     PERIOD DUE:{todo_items['task_time']}''') 
