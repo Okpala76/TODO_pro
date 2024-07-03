@@ -1,13 +1,14 @@
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
+import time
 
 
 class Todo():
     def __init__(self):
         # a statment to greet and introduce the user to our application
         self.welcome = print ("""
-        Welcome to  Todo.
+        Welcome to Todo.
         You have taken the first step towards getting your life organised and achieving your goals. 
         This app is designed to help you prioritise your tasks, stay focused, and boost your productivity.
 
@@ -20,10 +21,10 @@ class Todo():
         Let's get started and amke today count.
         """)
         
-        # a list holding all tasks in place
+        # List holding all tasks in place
         self.alltask = []
 
-        #a variable holding all commands 
+        # Variable holding all commands 
         self.manual ='''
         Commands: 
             create ----- To create todo item
@@ -34,24 +35,25 @@ class Todo():
             help   ----- To view manual
             '''
 
-        ### th
+        # 
         self.mail = self.mail_collector()
 
 
     def create(self):
-        # requesting task name and time from user
+        # Requesting task name and time from user
         task_name = input("What task do you want to perform: ")  #!input always give strings as output. ## Okay corrected
         task_time = input("At what time do you what to carry out said task: ") 
         # CREATING THE TASK
         task_row = {"task_id":len(self.alltask)+1, "task_name": task_name, "task_status": "Not Done", "task_time": task_time } #! i edited task id and added +1, so that the id of every new task will be higer than d last
         self.alltask.append(task_row)
 
-        ### wrote the code message for the mail alert
-        create_subject = f"Task Created!!!! :{task_name} "
+        # Wrote the code message for the mail alert
+        create_subject = f"Task Created!!!! :{task_name}"
         create_body = f"Your task '{task_name}' has been created and should be done by {task_time} "
 
-        ### The mail fuction being called in the create method
+        # The mail fuction being called in the create method
         self.mail_reminder(create_subject, create_body)
+        set_alarm(self)
         
     def read(self):
         for todo_items in self.alltask:
@@ -59,7 +61,7 @@ class Todo():
 {todo_items['task_id']}.] TASK: {todo_items['task_name']}    STATUS:{todo_items['task_status']}     PERIOD DUE:{todo_items['task_time']}''') 
 
     def update(self):
-        # initializing a variable to hold the task_id of the task to be marked done
+        # Initializing a variable to hold the task_id of the task to be marked done
 
         while True:
             task_id = input("What task number are you trying to change: ")
@@ -71,7 +73,7 @@ class Todo():
 
         print(f"The status of this task is currently:{self.alltask[int(task_id)-1]['task_status']}")
 
-        # this while loop will ensure the user wants to perform change as well as perform checks on user input
+        # This while loop will ensure the user wants to perform change as well as perform checks on user input
         task__name = self.alltask[int(task_id)-1]['task_name']
         task__status = self.alltask[int(task_id)-1]['task_status']
 
@@ -88,7 +90,7 @@ class Todo():
                 print("The value inputted is not a 'Y' or 'N': Try again....")
                 continue  
             
-        ## calling the mail function again to alert on update  
+        # Calling the mail function again to alert on update  
         update_subject = "Your task: " + task__name
         update_body = "The status of your task "+ task__name +" has been updated to " + task__status
         
@@ -98,14 +100,16 @@ class Todo():
 
 
     def delete(self):
-        #gets id of  task to be deleted:
+        # Gets id of  task to be deleted:
         cascade_task = int (input('input id of item to be deleted: '))
         index = 0
         for tasks in self.alltask:
-            #index of alltask list
+        # Index of alltask list
             
             if cascade_task == tasks['task_id']:
                 print(f"task id:{tasks['task_id']}selected")
+                # Reserve task detail for email refference
+                update_notification = tasks
                 del self.alltask[index]
                 print(f"task id:{tasks['task_id']} deleted")
                 break
@@ -113,50 +117,87 @@ class Todo():
             else:
                 index += 1
 
-        #update task id after delete.
+        # Update task id after delete.
         update_id = 1
         for tasks in self.alltask:
             tasks['task_id'] = update_id
             update_id +=1
         print('todo_list id updated')
+
+        # Calling the mail function again to alert on delete  
+        update_subject = f'{update_notification['task_name']} has been deleted'
+        update_body = f"Todo task item : {update_notification['task_name']} has been deleted"
+        self.mail_reminder(update_subject, update_body)
+        print('Notification of deletion Todo reminder sent')
+
         
-    def time(self):
-        alarm_prefrence = input('Do you wish to be reminded: yes or no?  ').lower()
-        if alarm_prefrence != 'no':
+    def alarm_time(self):
+        alarm_preference = input('Do you wish to be reminded: yes or no?  ').lower()
+        if alarm_preference != 'no':
+            # Inputs for the date and time of the alarm
             year = input('''
                             press enter to select your current year
-
-                            what year: ''') or str(datetime.now())[:4]
+                            what year: ''') or str(datetime.now().year)
             month = input('''
                             press enter to select your current month
-
-                            month(mm): ''') or str(datetime.now())[5:7]
+                            month(mm): ''') or str(datetime.now().month).zfill(2)
             day = input('''
                         press enter to select your current day
+                        day(dd): ''') or str(datetime.now().day).zfill(2)
+            specific_time = input('''Time (hh:mm):  ''')
 
-                        day(dd): ''') or str(datetime.now())[8:10]
-            specific_time = input('''Time (hh:mm):  ''')  
-            curr_time = str(datetime.now())[:16]
+            # Define alarm time
             alarm = f'{year}-{month}-{day} {specific_time}'
-            date_format = '%Y-%m-%d %H:%M'
-            print(f'{alarm} {curr_time}')
 
-            while True:
-                curr_time = str(datetime.now())[:16]
-                dt_obj = datetime.strptime(alarm, date_format)
-                dt_ob2 = datetime.strptime(curr_time, date_format)
-                seconds_since_epoch = int(dt_obj.timestamp())
-                current_time_sinceepoch = int(dt_ob2.timestamp())
-                print(f'{seconds_since_epoch} {current_time_sinceepoch}')
-                time_before_alarm = seconds_since_epoch - current_time_sinceepoch
-                print(time_before_alarm)
-                time.sleep(time_before_alarm)
-                if curr_time == alarm:
-                        print('time to do this')
-                        break
-                pass
-            
-    ## mail collector: This collect the users mail 
+            # Display the current and alarm time.
+            curr_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+            print(f'Current time: {curr_time}, Alarm time: {alarm}') # Can be removed in deployment stage.
+
+            # Convert alarm and current time into time objects
+            date_format = '%Y-%m-%d %H:%M'
+            dt_alarm = datetime.strptime(alarm, date_format)
+            dt_current = datetime.strptime(curr_time, date_format)
+
+            # Convert alarm and current time to seconds since epoch
+            seconds_since_epoch_alarm = int(dt_alarm.timestamp())
+            current_time_since_epoch = int(dt_current.timestamp())
+
+            print(f'Alarm time in seconds: {seconds_since_epoch_alarm}, Current time in seconds: {current_time_since_epoch}') # Can be removed in deployment stage.
+
+            # Calculate the amount of time before the alarm goes off
+            time_before_alarm = seconds_since_epoch_alarm - current_time_since_epoch
+            print(f'Time before alarm (seconds): {time_before_alarm}')
+            return alarm, curr_time, time_before_alarm
+
+    def set_alarm(self):
+        alarm, curr_time, time_before_alarm = self.alarm_time()
+        while True:
+            # Hold alarm until set time
+            time.sleep(time_before_alarm)
+
+            # Validate alarm time before ringing
+            curr_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+            if curr_time == alarm:
+                print('Time to do this')
+
+                # Calling the mail function to alert remind about task.  
+                update_subject = 'TODO REMINDER: you have a task to do'
+                update_body = """   You opted in to be reminded to peform a task now.
+                                    please open your todo app and see what you have to do"""
+                self.mail_reminder(update_subject, update_body)
+                print('Reminder notification sent to your mail.')
+                break
+            else:
+                # Recalculate the time before the alarm
+                date_format = '%Y-%m-%d %H:%M'
+                dt_alarm = datetime.strptime(alarm, date_format)
+                dt_current = datetime.strptime(curr_time, date_format)
+                seconds_since_epoch_alarm = int(dt_alarm.timestamp())
+                current_time_since_epoch = int(dt_current.timestamp())
+                time_before_alarm = seconds_since_epoch_alarm - current_time_since_epoch
+            print("Alarm rings")            
+    
+    # Mail collector: This collect the users mail 
     def mail_collector(self):
         while True:
             email = input("Please provide an email for alerts: ")
@@ -169,7 +210,7 @@ class Todo():
                 break   
         return email
 
-    ## mail_reminder: This bears the email interaction function
+    # Mail_reminder: This bears the email interaction function
     def mail_reminder(self,task_subject,task_message):
 
         def email_alert(subject, body,to):
